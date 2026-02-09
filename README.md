@@ -1,9 +1,11 @@
-This is my drumwave demo to showcase me using JavaScript to validate input and submit it to a backend API.
+This is my drumwave demo to show a simple form validation and submission using JavaScript to validate input and 
+submit it to a backend API.
 
 For this demo, the API uses an in-memory data store, though a real application would use a proper database instead 
 of a dummy API (server.js). The server applies recursive update logic to prefix "new-" only to values that change 
-during a given submission, and tracks metadata such as the number of updates per item and the timestamp of the most 
-recent update. The id field is treated as immutable and is never modified. 
+during a given submission. The "new-" is removed if another update doesn't change the string value (i.e.. price 
+changes instead). The server.js also tracks metadata such as the number of updates per item and the timestamp of 
+the most recent update as part of the requirements. The id field is treated as immutable and is never modified. 
 
 Styling is intentionally minimal. In a real-world application, styles would typically be centralized in shared or 
 global stylesheets.
