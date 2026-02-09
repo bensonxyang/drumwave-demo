@@ -1,0 +1,127 @@
+<html>
+
+<head>
+    <title>Benson Yang's Assignment</title>
+    <meta charset="utf-8" />
+    <meta name="description" content="A simple form validation example using JavaScript to perform simple validation
+     and then submit the request to a backend API. I used a simple in-memory based store to hold the data but obviously there 
+     would be proper database integration in a real application that replaces my dummy api call (server.js). 
+     I've used recursive data updating to prefix 'new-' for only actual new values. and I've added metadata for number of updates
+     to any item to keep track of the number of updates each item has received as well as a timestamp of when it was last updated.
+     The id field is the only exception- it must remain unchanged." />
+</head>
+<!-- I've only included minimal styling. In a real-world application, all styles would typically be centralized in various global stylesheets -->
+<style>
+    div {
+        margin: 10px;
+    }
+
+    label {
+        display: inline-block;
+        width: 200px;
+    }
+</style>
+
+<body>
+    <form id="form">
+        <div>
+            <label for="id">id</label>
+            <input id="id" name="id" />
+        </div>
+        <div>
+            <label for="name">name</label>
+            <input id="name" name="name" />
+        </div>
+        <div>
+            <label for="price">price</label>
+            <input id="price" name="price" />
+        </div>
+        <div>
+            <label for="tags">tags (comma-separated)</label>
+            <input id="tags" name="tags" placeholder="tag1, tag2, tag3" />
+        </div>
+        <div>
+            <button type="submit">Validate</button>
+        </div>
+        <div>
+            <div id="msg"></div>
+            <pre id="out" hidden></pre>
+        </div>
+    </form>
+    <!--
+    I’m using JavaScript to process the form and submit it to a simple API I created for this project.
+    Because of that, both the static HTTP server and server.js need to be running, otherwise the API request will fail.
+    The front end handles form validation and submitting the data, while the server.js handles the create/update logic.
+    In a real world application there would be more complex logic and error handling on the front-end web application, 
+    the back-end API application, and the database application.
+    I also think that normally the API and database would be hosted separately from the front-end web app, 
+    but for simplicity, everything lives in this one project and the data is just simply stored in memory.
+    -->
+    <script>
+        const $ = (id) => document.getElementById(id);
+        const form = $("form"), msg = $("msg"), out = $("out");
+
+        const isNonEmptyString = (v) => typeof v === "string" && v.trim().length > 0;
+        const toNumber = (v) => (v.trim() === "" ? NaN : Number(v));
+        const parseTags = (v) => v.split(",").map(s => s.trim()).filter(Boolean);
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            msg.className = "";
+            msg.innerHTML = "";
+            out.hidden = true;
+
+            const data = {
+                id: $("id").value,
+                name: $("name").value,
+                price: $("price").value,
+                tags: parseTags($("tags").value),
+            };
+
+            const errors = [];
+            if (!isNonEmptyString(data.id)) errors.push("Please enter an id.");
+            if (!isNonEmptyString(data.name)) errors.push("Please enter a name.");
+
+            const n = toNumber(data.price);
+            if (!Number.isFinite(n)) errors.push("Price must be a number.");
+            if (data.tags.length === 0) errors.push("Tags must contain at least one value.");
+
+            if (errors.length) {
+                msg.className = "err";
+                msg.innerHTML = errors.map(x => `<div>${x}</div>`).join("");
+                return;
+            }
+
+            const payload = {
+                id: data.id.trim(),
+                name: data.name.trim(),
+                price: n,
+                tags: data.tags
+            };
+
+            try {
+                msg.textContent = "Sending...";
+
+                const res = await fetch("http://localhost:3000/items", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+
+                const result = await res.json();
+                if (!res.ok) throw new Error(result.error || "Request failed");
+
+                msg.className = "ok";
+                msg.textContent = "Saved";
+                out.hidden = false;
+                out.textContent = JSON.stringify(result, null, 2);
+
+            } catch (err) {
+                msg.className = "err";
+                msg.textContent = err.message || "API request failed.";
+            }
+        });
+    </script>
+</body>
+
+</html>

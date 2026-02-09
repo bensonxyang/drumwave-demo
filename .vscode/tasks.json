@@ -1,0 +1,14 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Serve index.html on 8080",
+      "type": "shell",
+      "command": "npx",
+      "args": ["http-server", ".", "-p", "8080", "-c-1"],
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "reveal": "always" }
+    }
+  ]
+}
