@@ -3,14 +3,8 @@
 <head>
     <title>Benson Yang's Assignment</title>
     <meta charset="utf-8" />
-    <meta name="description" content="A simple form validation example using JavaScript to perform simple validation
-     and then submit the request to a backend API. I used a simple in-memory based store to hold the data but obviously there 
-     would be proper database integration in a real application that replaces my dummy api call (server.js). 
-     I've used recursive data updating to prefix 'new-' for only actual new values. and I've added metadata for number of updates
-     to any item to keep track of the number of updates each item has received as well as a timestamp of when it was last updated.
-     The id field is the only exception- it must remain unchanged." />
 </head>
-<!-- I've only included minimal styling. In a real-world application, all styles would typically be centralized in various global stylesheets -->
+
 <style>
     div {
         margin: 10px;
@@ -48,16 +42,7 @@
             <pre id="out" hidden></pre>
         </div>
     </form>
-    <!--
-    I’m using JavaScript to process the form and submit it to a simple API I created for this project.
-    Because of that, both the static HTTP server and server.js need to be running, otherwise the API request will fail.
-    The front end handles form validation and submitting the data, while the server.js handles the create/update logic.
-    In a real world application there would be more complex logic and error handling on the front-end web application, 
-    the back-end API application, and the database application.
-    I also think that normally the API and database would be hosted separately from the front-end web app, 
-    but for simplicity, everything lives in this one project and the data is just simply stored in memory.
-    -->
-    <script>
+      <script>
         const $ = (id) => document.getElementById(id);
         const form = $("form"), msg = $("msg"), out = $("out");
 
@@ -123,5 +108,4 @@
         });
     </script>
 </body>
-
 </html>
